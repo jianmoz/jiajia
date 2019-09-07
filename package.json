@@ -14,7 +14,8 @@
   },
   "dependencies": {
     "vue": "^2.5.2",
-    "vue-router": "^3.0.1"
+    "vue-router": "^3.0.1",
+    "vuex": "^3.1.1"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",
@@ -77,5 +78,13 @@
   "directories": {
     "test": "test"
   },
-  "license": "ISC"
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jianmoz/jiajia.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jianmoz/jiajia/issues"
+  },
+  "homepage": "https://github.com/jianmoz/jiajia#readme"
 }
