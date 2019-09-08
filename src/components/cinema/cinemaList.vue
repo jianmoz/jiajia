@@ -1,88 +1,23 @@
 <template>
     <div class="cinema_body">
         <ul>
-            <li>
+            <li v-for="item in ciList" :key="item.id">
                 <div>
-                    <span>大地影院(澳东世纪店)</span>
-                    <span class="q"><span class="price">22.9</span> 元起</span>
+                    <span>{{ item.nm }}</span>
+                    <span class="q"><span class="price">{{ item.sellPrice }}</span> 元起</span>
                 </div>
                 <div class="address">
-                    <span>金州区大连经济技术开发区澳东世纪3层</span>
-                    <span>1763.5km</span>
+                    <span>{{ item.addr }}</span>
+                    <span>{{ item.distance }}</span>
                 </div>
+                <!--item.tag的值是一个对象，遍历该对象，num是值, key是键名-->
                 <div class="card">
-                    <div>小吃</div>
-                    <div>折扣卡</div>
-                </div>
-            </li>
-            <li>
-                <div>
-                    <span>大地影院(澳东世纪店)</span>
-                    <span class="q"><span class="price">22.9</span> 元起</span>
-                </div>
-                <div class="address">
-                    <span>金州区大连经济技术开发区澳东世纪3层</span>
-                    <span>1763.5km</span>
-                </div>
-                <div class="card">
-                    <div>小吃</div>
-                    <div>折扣卡</div>
-                </div>
-            </li>
-            <li>
-                <div>
-                    <span>大地影院(澳东世纪店)</span>
-                    <span class="q"><span class="price">22.9</span> 元起</span>
-                </div>
-                <div class="address">
-                    <span>金州区大连经济技术开发区澳东世纪3层</span>
-                    <span>1763.5km</span>
-                </div>
-                <div class="card">
-                    <div>小吃</div>
-                    <div>折扣卡</div>
-                </div>
-            </li>
-            <li>
-                <div>
-                    <span>大地影院(澳东世纪店)</span>
-                    <span class="q"><span class="price">22.9</span> 元起</span>
-                </div>
-                <div class="address">
-                    <span>金州区大连经济技术开发区澳东世纪3层</span>
-                    <span>1763.5km</span>
-                </div>
-                <div class="card">
-                    <div>小吃</div>
-                    <div>折扣卡</div>
-                </div>
-            </li>
-            <li>
-                <div>
-                    <span>大地影院(澳东世纪店)</span>
-                    <span class="q"><span class="price">22.9</span> 元起</span>
-                </div>
-                <div class="address">
-                    <span>金州区大连经济技术开发区澳东世纪3层</span>
-                    <span>1763.5km</span>
-                </div>
-                <div class="card">
-                    <div>小吃</div>
-                    <div>折扣卡</div>
-                </div>
-            </li>
-            <li>
-                <div>
-                    <span>大地影院(澳东世纪店)</span>
-                    <span class="q"><span class="price">22.9</span> 元起</span>
-                </div>
-                <div class="address">
-                    <span>金州区大连经济技术开发区澳东世纪3层</span>
-                    <span>1763.5km</span>
-                </div>
-                <div class="card">
-                    <div>小吃</div>
-                    <div>折扣卡</div>
+                    <div v-for="(value, key) in item.tag" v-if="value === 1" :key="key" :class="key | classTag">
+                        {{ key | formatTag }}
+                    </div>
+                    <div v-for="(value, key) in item.tag" v-if="key === 'hallType' ">
+                        {{ value | hallFormat }}
+                    </div>
                 </div>
             </li>
         </ul>
@@ -91,7 +26,62 @@
 
 <script>
     export default {
-        name: "cinemaList"
+        name: "cinemaList",
+        data(){
+            return {
+                ciList: []
+            }
+        },
+        mounted() {
+            this.axios.get('/api/cinemaList?cityId=10').then((res)=>{
+                var msg = res.data.msg
+                if(msg === 'ok'){
+                    this.ciList = res.data.data.cinemas
+                }
+            })
+        },
+    //    设置电影院标签以及样式的过滤器，进行一一映射
+        filters:{
+            formatTag(key){
+                var tagList = [
+                    { key: 'allowRefund', value: '退票' },
+                    { key: 'buyout', value: '3D眼镜收费' },
+                    { key: 'sell', value: '正营业'},
+                    { key: 'vipTag', value: '折扣卡' },
+                    { key: 'snack', value: '观影小食' },
+                    { key: 'cityCardTag', value: '影城卡' },
+                    { key: 'deal', value: '改签' },
+                    { key: 'endorse', value: '可停车' }
+                ];
+                for(var i=0; i< tagList.length; i++){
+                    if(tagList[i].key === key){
+                        return tagList[i].value;
+                    }
+                }
+                return '';
+            },
+            hallFormat(value){
+                return value[0]
+            },
+            classTag(key){
+                var tagList = [
+                    { key: 'allowRefund', value: 'bl' },
+                    { key: 'buyout', value: 'bl' },
+                    { key: 'sell', value: 'bl'},
+                    { key: 'vipTag', value: 'or' },
+                    { key: 'snack', value: 'or' },
+                    { key: 'cityCardTag', value: 'bl' },
+                    { key: 'deal', value: 'bl' },
+                    { key: 'endorse', value: 'bl' }
+                ];
+                for(var i=0; i< tagList.length; i++){
+                    if(tagList[i].key === key){
+                        return tagList[i].value
+                    }
+                }
+                return  ''
+            }
+        }
     }
 </script>
 
