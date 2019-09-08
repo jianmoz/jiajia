@@ -5,6 +5,14 @@ import Vuex from 'vuex'
 import App from './App'
 import router from './router'
 import store from './store'
+import axios from 'axios'
+
+Vue.prototype.axios = axios
+
+//设置全局过滤器，包括对图片url的处理
+Vue.filter('setWH', (url, arg)=>{
+  return url.replace(/w\.h/,arg)
+})
 
 Vue.config.productionTip = false
 
