@@ -43,10 +43,12 @@
             message(newVal){
                 // 使用axios自带的功能防止多次频繁请求 防止函数抖动
                 var that = this;
+
+                var cityId = this.$store.state.city.id;
                 // 取消上一次请求
                 this.cancelRequest();
 
-                this.axios.get('/api/searchList?cityId=10&kw='+ newVal,{
+                this.axios.get('/api/searchList?cityId='+ cityId +'&kw='+ newVal,{
                     cancelToken: new this.axios.CancelToken(function executor(c) {
                         that.source = c;
                     })

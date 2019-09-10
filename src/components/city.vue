@@ -1,56 +1,37 @@
 <template>
     <div class="city_body">
-        <!--<div class="city_list">
-            <div class="city_hot">
-                <h2>热门城市</h2>
-                <ul class="clearfix">
-                    <li>上海</li>
-                    <li>北京</li>
-                    <li>上海</li>
-                </ul>
-            </div>
-            <div class="city_sort">
-                <div>
-                    <h2>A</h2>
-                    <ul>
-                        <li>阿拉善盟</li>
-                        <li>鞍山</li>
-                        <li>安庆</li>
-                        <li>安阳</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-        <div class="city_index">
-            <ul>
-                <li>A</li>
-                <li>B</li>
-            </ul>
-        </div>-->
         <div class="city_list">
-            <div class="city_hot">
-                <h2>热门城市</h2>
-                <ul class="clearfix">
-                    <li v-for="item in hotList" v-bind:key="item.id">{{ item.nm }}</li>
-                </ul>
-            </div>
-            <!-- /.city_hot -->
-            <div class="city_sort" ref="city_sort">
-                <div v-for="item in cityList" v-bind:key="item.index">
-                    <h2>{{ item.index }}</h2>
-                    <ul>
-                        <li v-for="city in item.list" v-bind:key="city.id">{{ city.nm }}</li>
-                    </ul>
+            <loading v-if="isLoading"></loading>
+            <scroller v-else ref="city_List">
+<!--                只能包裹一个元素，需要加一个外层div-->
+                <div>
+                    <div class="city_hot">
+                        <h2>热门城市</h2>
+                        <ul class="clearfix">
+                            <li v-for="item in hotList" v-bind:key="item.id" @tap="handleToCity(item.id, item.nm)">
+                                {{ item.nm }}
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- /.city_hot -->
+                    <div class="city_sort" ref="city_sort">
+                        <div v-for="item in cityList" v-bind:key="item.index">
+                            <h2>{{ item.index }}</h2>
+                            <ul>
+                                <li v-for="city in item.list" v-bind:key="city.id" @tap="handleToCity(city.id, city.nm)">{{ city.nm }}</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- /.city_sort -->
                 </div>
-            </div>
-            <!-- /.city_sort -->
+            </scroller>
         </div>
         <!-- /.city_list -->
         <div class="city_index">
             <ul>
-                <li v-for="(item,index) in cityList" v-bind:key="item.index" @touchstart="handleToIndex(index)">{{
-                    item.index
-                    }}</li>
+                <li v-for="(item,index) in cityList" v-bind:key="item.index" @touchstart="handleToIndex(index)">
+                    {{ item.index }}
+                </li>
             </ul>
         </div>
         <!--city.index指向的是字母ABCD, v-for里面的index是数组下标0，1，2，3....-->
@@ -64,19 +45,32 @@
         data(){
             return {
                 cityList: [],
-                hotList: []
+                hotList: [],
+                isLoading: true
             }
         },
         mounted() {
-            this.axios.get('/api/cityList').then((res)=>{
-                var msg = res.data.msg;
-                if(msg === 'ok'){
-                    var cities = res.data.data.cities;
-                    var {cityList, hotList} = this.formatCityList(cities);
-                    this.cityList = cityList;
-                    this.hotList = hotList;
-                }
-            })
+            var cityList = window.localStorage.getItem('cityList');
+            var hotList = window.localStorage.getItem('hotList');
+            if(cityList && hotList){
+                this.cityList = JSON.parse(cityList); //本地保存的是字符串，需要还原格式
+                this.hotList = JSON.parse(hotList);
+                this.isLoading = false;
+            }else {
+                this.axios.get('/api/cityList').then((res)=>{
+                    var msg = res.data.msg;
+                    if(msg === 'ok'){
+                        this.isLoading = false;
+                        var cities = res.data.data.cities;
+                        var {cityList, hotList} = this.formatCityList(cities);
+                        this.cityList = cityList;
+                        this.hotList = hotList;
+                        //数据基本不变，本地存储，避免发送ajax请求
+                        window.localStorage.setItem('cityList', JSON.stringify(cityList));
+                        window.localStorage.setItem('hotList', JSON.stringify(hotList));
+                    }
+                })
+            }
         },
         methods:{
             formatCityList(cities){
@@ -129,7 +123,19 @@
             handleToIndex(index){
                 var h2 = this.$refs.city_sort.getElementsByTagName('h2') //返回所有的h2标签元素组成的数组
                 //设置父节点city_list向上滚动距离等于点击字母相对于定位元素city_body的距离
-                this.$refs.city_sort.parentNode.scrollTop = h2[index].offsetTop
+                // this.$refs.city_sort.parentNode.scrollTop = h2[index].offsetTop
+                //better-scroll包裹后，原生的滑动已经不管用了，better-scroll有对应的方法scrollTo(x,y) x 一般是0，y向下滑是正
+                // ref属性在组件上，返回的是组件，从而能调用组件的属性和方法，ref在dom上，返回的是html元素
+                this.$refs.city_List.toScrollTop(-h2[index].offsetTop)  //向上滑动是负的
+            },
+            //使用vuex来管理城市id和name
+            handleToCity(id, nm){
+                this.$store.commit('city/CITY_INFO', { id, nm });
+                //将数据存储到本地，刷新时候记住城市
+                window.localStorage.setItem('nowId', id);
+                window.localStorage.setItem('nowNm', nm);
+                //编程式路由进行跳转页面
+                this.$router.push('/movie/playing');
             }
         }
     }
