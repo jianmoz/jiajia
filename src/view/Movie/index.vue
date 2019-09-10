@@ -20,6 +20,7 @@
             </div>
             <!-- /#content -->
         <footerComponent></footerComponent>
+        <router-view name="detail"></router-view>
     </div>
 </template>
 
