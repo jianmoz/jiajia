@@ -1,6 +1,6 @@
 <template>
     <header id="header">
-        <h1>{{ title }}</h1>
+        <slot></slot> <h1>{{ title }}</h1>
     </header>
 </template>
 
@@ -10,7 +10,7 @@
         props: {
             title:{
                 type: String,
-                default: '佳禾电影'
+                default: '佳佳电影'
             }
         }
     }

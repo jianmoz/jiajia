@@ -7,9 +7,10 @@
                 <li v-for="item in movieList" :key="item.id">
                     <!--渲染属性变量src,先绑定再直接赋值，不能使用{{ value }}来赋值， 同时图片url里面w.h需要设置，
                     这里直接用过滤器来整体实现-->
-                    <div class="pic_show" @tap="handleToDetail"><img :src="item.img | setWH('128.180')"></div>
+                    <div class="pic_show" @tap="handleToDetail(item.id)"><img :src="item.img | setWH('128.180')"></div>
                     <div class="info_list">
-                        <h2 @tap="handleToDetail">{{ item.nm }}<img v-if="item.version === 'v3d imax'" src="@/assets/maxs.png" alt=""></h2>
+                        <h2 @tap="handleToDetail(item.id)">{{ item.nm }}<img v-if="item.version === 'v3d imax'"
+                                                                     src="@/assets/maxs.png" alt=""></h2>
                         <p>观众评分：<span class="grade">{{ item.sc }}</span></p>
                         <p>主演: {{ item.star }}</p>
                         <p>{{ item.showInfo }}</p>
@@ -78,8 +79,8 @@
             })
         },
         methods:{
-            handleToDetail(){
-                console.log('handleToDetail')
+            handleToDetail(movieId){
+                this.$router.push('/movie/detail/1/'+ movieId)
             },
             handleToScroll(pos){
                 if(pos.y > 30){
