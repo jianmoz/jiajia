@@ -1,26 +1,29 @@
 <template>
     <div class="cinema_body">
-        <ul>
-            <li v-for="item in ciList" :key="item.id">
-                <div>
-                    <span>{{ item.nm }}</span>
-                    <span class="q"><span class="price">{{ item.sellPrice }}</span> 元起</span>
-                </div>
-                <div class="address">
-                    <span>{{ item.addr }}</span>
-                    <span>{{ item.distance }}</span>
-                </div>
-                <!--item.tag的值是一个对象，遍历该对象，num是值, key是键名-->
-                <div class="card">
-                    <div v-for="(value, key) in item.tag" v-if="value === 1" :key="key" :class="key | classTag">
-                        {{ key | formatTag }}
+        <loading v-if="isLoading"></loading>
+        <scroller v-else>
+            <ul>
+                <li v-for="item in ciList" :key="item.id">
+                    <div>
+                        <span>{{ item.nm }}</span>
+                        <span class="q"><span class="price">{{ item.sellPrice }}</span> 元起</span>
                     </div>
-                    <div v-for="(value, key) in item.tag" v-if="key === 'hallType' ">
-                        {{ value | hallFormat }}
+                    <div class="address">
+                        <span>{{ item.addr }}</span>
+                        <span>{{ item.distance }}</span>
                     </div>
-                </div>
-            </li>
-        </ul>
+                    <!--item.tag的值是一个对象，遍历该对象，num是值, key是键名-->
+                    <div class="card">
+                        <div v-for="(value, key) in item.tag" v-if="value === 1" :key="key" :class="key | classTag">
+                            {{ key | formatTag }}
+                        </div>
+                        <div v-for="(value, key) in item.tag" v-if="key === 'hallType' ">
+                            {{ value | hallFormat }}
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </scroller>
     </div>
 </template>
 
@@ -29,14 +32,21 @@
         name: "cinemaList",
         data(){
             return {
-                ciList: []
+                ciList: [],
+                isLoading: true,
+                preCityId: -1
             }
         },
-        mounted() {
-            this.axios.get('/api/cinemaList?cityId=10').then((res)=>{
+        activated() {
+            var cityId = this.$store.state.city.id;
+            if(this.preCityId === cityId){ return ;}
+            this.isLoading = true;
+            this.axios.get('/api/cinemaList?cityId='+cityId).then((res)=>{
                 var msg = res.data.msg
                 if(msg === 'ok'){
-                    this.ciList = res.data.data.cinemas
+                    this.ciList = res.data.data.cinemas;
+                    this.isLoading = false;
+                    this.preCityId = cityId;
                 }
             })
         },

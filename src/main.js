@@ -14,7 +14,13 @@ Vue.filter('setWH', (url, arg)=>{
   return url.replace(/w\.h/,arg)
 })
 
-Vue.config.productionTip = false
+import scroller from "./components/scroller";
+Vue.component('scroller', scroller) ;   //全局封装better-scroll组件
+
+import loading from "./components/loading";
+Vue.component('loading', loading);
+
+Vue.config.productionTip = false;
 
 /* eslint-disable no-new */
 new Vue({
