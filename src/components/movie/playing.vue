@@ -41,7 +41,7 @@
             //切换城市时候重新发起ajax请求， 其他时候应该利用keep-alive的缓存无须再次发起ajax请求，向下执行
             if(this.preCityId === cityId){ return ;} //没有切换城市不用往下进行，发起请求，直接使用keep-alive的缓存
             this.isLoading = true   //城市已经切换，重新发起请求
-            this.axios.get('/api/movieOnInfoList?cityId='+cityId).then((res)=>{
+            this.axios.get('/api/movieOnInfoList?cityId='+cityId,).then((res)=>{
                 var msg = res.data.msg
                 if(msg === 'ok'){
                     this.movieList = res.data.data.movieList;

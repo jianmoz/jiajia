@@ -20,6 +20,11 @@ Vue.component('scroller', scroller) ;   //全局封装better-scroll组件
 import loading from "./components/loading";
 Vue.component('loading', loading);
 
+import ElementUI from 'element-ui';
+import 'element-ui/lib/theme-chalk/index.css';
+
+Vue.use(ElementUI);
+
 Vue.config.productionTip = false;
 
 /* eslint-disable no-new */

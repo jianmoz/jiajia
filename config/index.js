@@ -9,8 +9,13 @@ module.exports = {
 
     // Paths
     assetsSubDirectory: 'static',
+    //静态资源根路径
     assetsPublicPath: '/',
     proxyTable: {
+      '/api2': {
+        target: 'http://localhost:3000',
+        changeOrigin: true
+      },
       '/api':{
         target: 'http://39.97.33.178/',
         changeOrigin: true,
@@ -18,8 +23,8 @@ module.exports = {
     },
 
     // Various Dev Server settings
-    // host: 'localhost', // can be overwritten by process.env.HOST
-    host: '0.0.0.0',
+    host: 'localhost', // can be overwritten by process.env.HOST
+    // host: '0.0.0.0',     //手机测试
     port: 8080, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
     autoOpenBrowser: false,
     errorOverlay: true,
@@ -49,13 +54,12 @@ module.exports = {
     // Paths
     assetsRoot: path.resolve(__dirname, '../dist'),
     assetsSubDirectory: 'static',
-    assetsPublicPath: '/',
-
+    assetsPublicPath: '/jiajia/',
     /**
      * Source Maps
      */
 
-    productionSourceMap: true,
+    productionSourceMap: false,
     // https://webpack.js.org/configuration/devtool/#production
     devtool: '#source-map',
 

@@ -2,7 +2,7 @@
     <div id="main">
         <headerComponent title="我的佳佳"></headerComponent>
         <div id="content">
-            <loginComponent></loginComponent>
+            <router-view></router-view>
         </div>
         <!-- /#content -->
         <footerComponent></footerComponent>

@@ -3,18 +3,19 @@ import Vue from 'vue'
 import MessageBox from './MessageBox'
 
 export var messageBox = (function () {
-    var defaults = { //默认值
-        title: '',
-        content: '',
-        cancel: '',
-        ok: '',
-        handleCancel: null,
-        handleOk: null
-    };
-
-    var MyComponent = Vue.extend(MessageBox);   //根据组件返回相应的组件类，将类和组件结合在一起, Vue的子类
 
     return function (opts) { //配置参数
+        var defaults = { //默认值
+            title: '',
+            content: '',
+            cancel: '',
+            ok: '',
+            handleCancel: null,
+            handleOk: null
+        };
+
+        var MyComponent = Vue.extend(MessageBox);   //根据组件返回相应的组件类，将类和组件结合在一起, Vue的子类
+
         for(var attr in opts){
             defaults[attr] = opts[attr];
         }
